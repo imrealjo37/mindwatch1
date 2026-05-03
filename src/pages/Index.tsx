@@ -128,6 +128,23 @@ const playWarningBeep = () => {
   }
 };
 
+const unlockAudio = () => {
+  const AudioContextClass =
+    window.AudioContext || (window as any).webkitAudioContext;
+
+  const ctx = new AudioContextClass();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  gain.gain.value = 0.001;
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.05);
+};
+
 export default function Index() {
   const { selectedPatient } = usePatient();
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -310,6 +327,7 @@ return (
           size="lg"
           className="px-20"
           onClick={() => {
+            unlockAudio();
             setDemoSec(0);
             setDemoStarted(true);
             setWarningPlayed(false);
