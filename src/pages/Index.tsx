@@ -101,6 +101,32 @@ function DashboardEEGChart({ sec, color }: { sec: number; color: string }) {
     </ResponsiveContainer>
   );
 }
+const playWarningBeep = () => {
+  const AudioContextClass =
+    window.AudioContext || (window as any).webkitAudioContext;
+
+  const ctx = new AudioContextClass();
+
+  for (let i = 0; i < 2; i++) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+    osc.frequency.value = 750;
+
+    gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.4);
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      ctx.currentTime + i * 0.4 + 0.3
+    );
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(ctx.currentTime + i * 0.4);
+    osc.stop(ctx.currentTime + i * 0.4 + 0.3);
+  }
+};
 
 export default function Index() {
   const { selectedPatient } = usePatient();
@@ -108,11 +134,12 @@ export default function Index() {
 
   const [demoStarted, setDemoStarted] = useState(false);
   const [demoSec, setDemoSec] = useState(0);
+  const [warningPlayed, setWarningPlayed] = useState(false);
 
   const showAlert = selectedPatient.riskLevel === "high";
   const demoState = getDemoState(demoSec);
-  const [warningPlayed, setWarningPlayed] = useState(false);
 
+  // Clock in header
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -121,26 +148,29 @@ export default function Index() {
     return () => clearInterval(timer);
   }, []);
 
+  // Fast EEG demo timer
   useEffect(() => {
     if (!demoStarted) return;
 
     const timer = setInterval(() => {
       setDemoSec((prev) => {
         if (prev >= 1428) return 1428;
-        return prev + 10;
+        return prev + 10; // السرعة: زوديها لو تبغي أسرع، قلليها لو تبغي أبطأ
       });
     }, 100);
 
     return () => clearInterval(timer);
   }, [demoStarted]);
 
+  // Warning beep during the first 4 seconds of Pre-ictal
   useEffect(() => {
-  const timer = setInterval(() => {
-    setCurrentTime(new Date());
-  }, 1000);
+    if (!demoStarted) return;
 
-  return () => clearInterval(timer);
-}, []);
+    if (demoSec >= 420 && demoSec <= 424 && !warningPlayed) {
+      playWarningBeep();
+      setWarningPlayed(true);
+    }
+  }, [demoSec, demoStarted, warningPlayed]);
 
   const handleDismissAlert = () => {
     toast({
@@ -156,7 +186,7 @@ export default function Index() {
     });
   };
 
-  return (
+return (
     <Layout>
       {/* Header */}
       <header className="mb-6">
