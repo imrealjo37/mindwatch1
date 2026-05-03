@@ -28,6 +28,29 @@ function getDemoState(sec: number) {
       title: "🚨 Seizure Detected",
     };
   }
+  const playWarningBeep = () => {
+  const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+  for (let i = 0; i < 2; i++) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "square";
+    osc.frequency.value = 750;
+
+    gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.4);
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      ctx.currentTime + i * 0.4 + 0.3
+    );
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(ctx.currentTime + i * 0.4);
+    osc.stop(ctx.currentTime + i * 0.4 + 0.3);
+  }
+};
 
   if (sec >= 420) {
     return {
@@ -88,6 +111,7 @@ export default function Index() {
 
   const showAlert = selectedPatient.riskLevel === "high";
   const demoState = getDemoState(demoSec);
+  const [warningPlayed, setWarningPlayed] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -109,6 +133,14 @@ export default function Index() {
 
     return () => clearInterval(timer);
   }, [demoStarted]);
+
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
 
   const handleDismissAlert = () => {
     toast({
@@ -250,6 +282,7 @@ export default function Index() {
           onClick={() => {
             setDemoSec(0);
             setDemoStarted(true);
+            setWarningPlayed(false);
           }}
         >
           Start
