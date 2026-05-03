@@ -272,7 +272,6 @@ export default function Index() {
                   Live EEG Simulation
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Fast monitoring demo: 0–7 min Normal, 7–20 min Pre-ictal, 20+ min Ictal.
                 </p>
               </div>
 
