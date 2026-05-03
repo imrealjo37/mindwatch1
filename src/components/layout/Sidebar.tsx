@@ -1,4 +1,5 @@
 import { NavLink } from "@/components/NavLink";
+import { Play } from "lucide-react";
 import { 
   Activity, 
   LayoutDashboard, 
@@ -26,6 +27,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: History, label: "History", path: "/history" },
   { icon: Bell, label: "Alerts", path: "/alerts" },
+  { icon: Play, label: "Run", path: "/run" }, 
   { icon: User, label: "Profile", path: "/profile" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
