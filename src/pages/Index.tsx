@@ -107,12 +107,12 @@ const playWarningBeep = () => {
 
   const ctx = new AudioContextClass();
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
     osc.type = "square";
-    osc.frequency.value = 750;
+    osc.frequency.value = 850;
 
     gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.4);
     gain.gain.exponentialRampToValueAtTime(
