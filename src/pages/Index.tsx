@@ -103,7 +103,7 @@ export default function Index() {
     const timer = setInterval(() => {
       setDemoSec((prev) => {
         if (prev >= 1428) return 1428;
-        return prev + 40;
+        return prev + 10;
       });
     }, 100);
 
@@ -303,11 +303,6 @@ export default function Index() {
                 <p className={cn("font-bold", demoState.text)}>
                   {demoState.status}
                 </p>
-              </div>
-
-              <div>
-                <p className="text-muted-foreground">Patient</p>
-                <p className="font-bold">sub-002 / run-06</p>
               </div>
 
               <div>
